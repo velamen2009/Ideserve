@@ -74,6 +74,18 @@ public:
 	void sort_quick(){
 		_quick_sort(0, _pVec->size()-1);
 	}
+	
+	void sort_heap(){
+		int i = _pVec->size()/2-1;
+		while(i>=0){
+			Sink(i, _pVec->size());
+			--i;
+		}
+		for(int j=_pVec->size()-1; j>0; --j){
+			swp((*_pVec)[0],(*_pVec)[j]);
+			Sink(0, j);
+		}
+	}
 private:
 	void _sort_topdown_merge(int lo, int hi){
 		if(hi<=lo){
@@ -143,7 +155,20 @@ private:
 		}
 		swp((*_pVec)[lo], (*_pVec)[i-1]);
 		return i-1;
-	} 
+	}
+
+	void Sink(int i, int size){
+		while(2*i+1<size){
+			int j=2*i+1;
+			if(j+1<size&&cmp((*_pVec)[j+1],(*_pVec)[j])){
+				++j;
+			}
+			if(cmp((*_pVec)[j],(*_pVec)[i])){
+				swp((*_pVec)[j],(*_pVec)[i]);
+			}
+			i=j;
+		}
+	}
 	
 private:
 	vector<T>* _pVec;
@@ -222,5 +247,12 @@ int main(){
 	sort.display();
 	cout<<"After quick sort:\n";
 	sort.sort_quick();
+	sort.display();
+	
+	makeArray(iVec);
+	cout<<"Before heap sort:\n";
+	sort.display();
+	cout<<"After heap sort:\n";
+	sort.sort_heap();
 	sort.display();
 }
