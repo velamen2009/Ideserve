@@ -2,6 +2,7 @@
 #include <vector>
 #include <queue>
 #include <stack>
+#include <map>
 #include <math.h>
 
 using namespace std;
@@ -91,11 +92,13 @@ public:
 	}
 	
 	void preorder(){
+		cout<<"Preorder:"<<endl;
 		_preorder(root);
 		cout<<endl;
 	}
 	
 	void preorder_norecursion(){
+		cout<<"Preorder norecursion:"<<endl;
 		stack<TreeNode<T>*> _stack;
 		_stack.push(root);
 		while(!_stack.empty()){
@@ -113,11 +116,13 @@ public:
 	}
 	
 	void midorder(){
+		cout<<"Midorder:"<<endl;
 		_midorder(root);
 		cout<<endl;
 	}
 	
 	void midorder_norecursion(){
+		cout<<"Midorder norecursion:"<<endl;
 		stack<TreeNode<T>*> _stack;
 		TreeNode<T>* node = root;
 		while(!_stack.empty() || 0!=node){
@@ -132,24 +137,30 @@ public:
 				node = top->right;
 			}
 		}
+		cout<<endl;
 	}
 	
 	void postorder(){
+		cout<<"Postorder:"<<endl;
 		_postorder(root);
 		cout<<endl;
 	}
 	
 	void postorder_norecursion(){
-		stack<TreeNode<T>*> _stack;
-		TreeNode<T>* node = root;
-		while(!_stack.empty()||0!=node){
-			if(0!=node){
-				_stack.push(node);
-				node=node->right;
+		
+	}
+	
+	void vertical_order(){
+		cout<<"Verticalorder:"<<endl;
+		map<int, vector<T> > verticalMap;
+		addintomap(verticalMap, 0, root);
+		typename map<int, vector<T> >::iterator it;
+		for(it=verticalMap.begin(); it!=verticalMap.end(); ++it){
+			cout<<it->first<<":\t";
+			for(int i=0; i<it->second.size(); ++i){
+				cout<<it->second[i]<<"\t";
 			}
-			else{
-				
-			}
+			cout<<endl;
 		}
 	}
 	
@@ -174,6 +185,21 @@ private:
 		_postorder(node->right);
 		cout<<node->data<<"\t";
 	}
+	void addintomap(map<int, vector<T> >& verticalMap, int distance, TreeNode<T>* node){
+		if(NULL==node){ return; }
+		typename map<int, vector<T> >::iterator it;
+		it = verticalMap.end();
+		if(verticalMap.find(distance)==it){
+			vector<T> vec;
+			vec.push_back(node->data);
+			verticalMap.insert(pair<int, vector<T> >(distance, vec));
+		}
+		else{
+			verticalMap[distance].push_back(node->data);
+		}
+		addintomap(verticalMap, distance-1, node->left);
+		addintomap(verticalMap, distance+1, node->right);
+	}
 private:
 	TreeNode<T>* root;
 	vector<TreeNode<T>*> tree;
@@ -190,6 +216,6 @@ int main(){
 	tree.postorder();
 	tree.preorder_norecursion();
 	tree.midorder_norecursion();
-	
+	tree.vertical_order();
 	return 0;
 }
