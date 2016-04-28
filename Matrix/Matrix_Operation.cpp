@@ -15,7 +15,7 @@ public:
 	Matrix(int row, int col):_row(row),_col(col){
 		p = new int*[_row];
 		for(int i=0; i<_row; ++i){
-			p[i] = new int[_row];
+			p[i] = new int[_col];
 
 			for(int j=0; j<_col; ++j){
 				p[i][j] = 0;
@@ -27,7 +27,7 @@ public:
 		_col = rhs._col;
 		p = new int*[_row];
 		for(int i=0; i<_row; ++i){
-			p[i] = new int[_row];
+			p[i] = new int[_col];
 
 			for(int j=0; j<_col; ++j){
 				p[i][j] = rhs.p[i][j];
@@ -67,9 +67,26 @@ public:
 		}
 		return *this;
 	}
+	Matrix upper_triangle(){
+		cout<<"Triangle: "<<endl;
+		Matrix rt = Matrix(*this);
+		for(int i=0; i<_col-1; ++i){
+			if(0==rt.p[i][i]){continue;}
+			for(int j=i+1; j<_row; ++j){
+				if(0!=rt.p[j][i]){
+					int a = rt.p[i][i];
+					int b = rt.p[j][i];
+					for(int k=0; k<_col; ++k){
+						rt.p[j][k] = rt.p[j][k]*a - rt.p[i][k]*b;
+					}
+				}
+			}
+		}
+		return rt;
+	}
 	friend Matrix& operator+ (Matrix& lhs, const Matrix& m1);
 	friend Matrix& operator- (Matrix& lhs, const Matrix& m1);
-	friend Matrix& operator* (const Matrix& lhs, const Matrix& m1);
+	friend Matrix operator* (const Matrix& lhs, const Matrix& m1);
 private:
 	int **p;
 	int _row;
@@ -83,7 +100,7 @@ Matrix& operator- (Matrix& lhs, const Matrix& m1){
 	return (lhs -= m1);
 }
 
-Matrix& operator* (const Matrix& lhs, const Matrix& m1){
+Matrix operator* (const Matrix& lhs, const Matrix& m1){
 	Matrix rt(lhs._row, m1._col);
 	for(int i = 0; i < rt._row; i++){
 		for(int j = 0; j < rt._col; j++){
@@ -108,6 +125,7 @@ int main(){
 	Matrix matrix1(row, col);
 	matrix1.accept(vec);
 	matrix1.print();
+	matrix1.upper_triangle().print();
 	
 	Matrix matrix2(matrix1);
 	(matrix1*matrix2).print();
